@@ -82,25 +82,30 @@ class NDA{
 		set<int> mappedstates;
 		map<pair<int,char>,vector<int>> statevalues;
 };
+NDA concatenate(NDA first, NDA second){
+	set<char> alphabet {};
+	for(auto
+}
 int main(){
-	set<char> alphabet {'1','0'};
+	set<char> alphabet {'0'};
 	map<pair<int,char>,vector<int>> statevalues;
-	pair<int,char> node01 = {0,'1'};
-	pair<int,char> node00 = {0,'0'};
-	pair<int,char> node10 = {1,'0'};
-	pair<int,char> node11 = {1,'1'};
-	pair<int,char> node20 = {2,'0'};
-	pair<int,char> node21 = {2,'1'};
-	statevalues[node01] = vector<int>{0};
-	statevalues[node00] = vector<int>{0,1};	
-	statevalues[node10] = vector<int>{2};
-	statevalues[node11] = vector<int>{3};
-	statevalues[node20] = vector<int>{3};
-	statevalues[node21] = vector<int>{3};
+	
+	pair<int,char> node00 = {0,'.'};
+	
+	statevalues[node00] = {1};	
 	set<int> startstates = {0};
-	set<int> finishedstates = {2};
+	set<int> finishedstates = {1};
 	NDA nda(alphabet,startstates,finishedstates,statevalues);
-	cout << nda.simulate("010100");
+	ifstream fin;
+	fin.open("input.txt",ios::in);
+	string input;
+	string x;
+	while(fin >> x){
+		for(int i= 0;i<x.size();i++){
+			input += x[i];
+		}
+	}
+	cout << nda.simulate(input);
 	cout << "hey" << "\n";
 }	
 
