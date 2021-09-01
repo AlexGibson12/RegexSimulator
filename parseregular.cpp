@@ -84,12 +84,17 @@ class Parser{
 };
 
 
-int main(){
-	ifstream fin;
+int main(int argc, char** argv){
+	
+        ifstream fin;
 	fin.open("input.txt",ios::in);
 	string input;
 	fin >> input;
 	Parser pars(fin);
-	cout << pars.parse().simulate(input);
+	if(pars.parse().simulate(input)){
+		cout << input << " Matches the pattern!" << "\n";
+	}else{
+		cout << input << " Didnt match"<<"\n";
+	}
 
 }

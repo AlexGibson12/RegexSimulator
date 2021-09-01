@@ -1,2 +1,2 @@
-abab a*|bb|(ab)*
+abcabcbb (abc)*(cb|b*c)
 
