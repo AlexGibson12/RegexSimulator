@@ -1,2 +1,2 @@
-bc
+abab a*|bb|(ab)*
 

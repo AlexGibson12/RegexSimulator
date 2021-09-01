@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include </data/data/com.termux/files/home/regular/stdc++.h>
+#include "./nfa.cpp"
 using namespace std;
 class Parser{
 	public:
@@ -11,80 +12,62 @@ class Parser{
 
 			}
 		}
-		string expr(){
+		NDA expr(){
 			
-			string next = nextterm();
-			string right = rightexpr();
-			if(right.size()!=0){
-				return '(' + next + ')' + '|' + '(' + right + ')';
-
-			}else{
-				return next;
-			}
+			NDA next = nextterm();
+			NDA right = rightexpr();
+			return either(next,right);
 		}
-		string rightexpr(){
+		NDA rightexpr(){
 			if(pointer<input.size() and input[pointer] == '|'){
 				match('|');
-				string next = nextterm();
-				string right = rightexpr();
-				if(right.size()!=0){
-					cout << "here";
-					cout << next << "\n" << right << "\n";
-					return '(' + next + ')' + '|' + '(' + right + ")";
-				}else{
-					return next;
-				}
-			}
-			return "";
-		}
-		string nextterm(){
-			string terma = term();
-			string right = rightterm();
-			if (right.size()!=0){
-			return  terma + right ;
+				NDA next = nextterm();
+				NDA right = rightexpr();
 			
-			}else{
-				return terma;
+				return either(next,right);
+				
 			}
+			return one_character(':');
 		}
-		string rightterm(){
-			if (pointer < input.size() and input[pointer]!='|' and input[pointer]!=')' and ('a' <=input[pointer] <= 'z' || input[pointer] == '(')){
-				string terma = term();
-				string rightterma = rightterm();
-				if(rightterma.size()!=0){
-					return  terma   + rightterma ;
-				}else{
-					return terma;
-				}
+		NDA nextterm(){
+			NDA terma = term();
+			NDA right = rightterm();
+			return concatenate(terma,right);
+		}
+		NDA rightterm(){
+			if (pointer < input.size() and input[pointer]!='|' and input[pointer]!=')' and ('a' <=input[pointer] and input[pointer]<= 'z' || input[pointer] == '(')){
+				NDA terma = term();
+				NDA rightterma = rightterm();
+				return concatenate(terma,rightterma);
 			}
-			return "";
+			return one_character(':');
 			
 		}
-		string term(){
-			string factora = factor();
+		NDA term(){
+			NDA factora = factor();
 			if(pointer < input.size() and input[pointer]  == '*' ){
 				match('*');
-				return '(' + factora + ')' + '*';
+				return star(factora);
 			}else{
 				return factora;
 			}	
 		}
-		string factor(){
+		NDA factor(){
 
 			if(pointer<input.size() and input[pointer] == '('){
 				match('(');
-				string expression = expr();
+				NDA expression = expr();
 				match(')');
 				return expression;
-			}else if(pointer < input.size() and 'a'<=input[pointer] <='z' and input[pointer]!=')' and input[pointer]!='|'){
+			}else if(pointer < input.size() and 'a'<=input[pointer] and input[pointer] <='z' and input[pointer]!=')' and input[pointer]!='|'){
 
-				string t(1,input[pointer]);
+				char t = input[pointer];
 				match(input[pointer]);
-				return t;
+				return one_character(t);
 			}
-			return "";
+			return one_character(':');
 		}
-		string parse(){
+		NDA parse(){
 			pointer =0 ;
 			return expr();
 		}
@@ -104,7 +87,9 @@ class Parser{
 int main(){
 	ifstream fin;
 	fin.open("input.txt",ios::in);
+	string input;
+	fin >> input;
 	Parser pars(fin);
-	cout << pars.parse();
+	cout << pars.parse().simulate(input);
 
 }

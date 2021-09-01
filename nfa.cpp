@@ -1,4 +1,4 @@
-#include <bits/stdc++.h>
+#include </data/data/com.termux/files/home/regular/stdc++.h>
 using namespace std;
 
 class NDA{
@@ -82,6 +82,9 @@ class NDA{
 		map<pair<int,char>,vector<int>> statevalues;
 };
 NDA star(NDA nda){
+	if(nda.alphabet.find(':')!=nda.alphabet.end()){
+		return nda;
+	}
 	map<pair<int,char>,vector<int>> newstates;
 	pair<int,char> newpair;
 	set<int> states;
@@ -117,6 +120,9 @@ NDA star(NDA nda){
 	
 }
 NDA concatenate(NDA first,NDA second){
+	if(second.alphabet.find(':')!=second.alphabet.end()){
+		return first;
+		}
 	set<char> alphabet;
 	for(auto letter : first.alphabet){
 		alphabet.insert(letter);
@@ -182,23 +188,56 @@ NDA one_character(char t){
 	NDA nda(alphabet,startstates,finishedstates,statevalues);
 	return nda;
 }
-int main(){
-	
-	NDA ndaa = one_character('a');
-	NDA ndab = one_character('b');
-	NDA ndac = one_character('c');
-	
-	NDA combined = star(concatenate(ndaa,ndab));	
-	ifstream fin;
-	fin.open("input.txt",ios::in);
-	string input;
-	string x;
-	while(fin >> x){
-		for(int i= 0;i<x.size();i++){
-			input += x[i];
-		}
+NDA either(NDA first, NDA second){
+	if(second.alphabet.find(':') != second.alphabet.end()){
+       		return first;	 
 	}
-	cout << combined.simulate(input) << "\n";
-	
+	set<char> alphabet;
+	for(auto x: first.alphabet){
+        	alphabet.insert(x);
+	}
+	for(auto x: second.alphabet){
+		alphabet.insert(x);
+	}
+	map<pair<int,char>,vector<int>> combinedstatevalues;                                                   int firststates = 0;
+        int totalstates = 0;
+        pair<int,char> newpair;                           set<int> firsta;
+        set<int> seconda;         
+	vector<int> vals;
+	for(auto pair : first.statevalues){     
+		vals.clear();
+		for(auto x:pair.second){
+			vals.push_back(x+1);
+		}
+		combinedstatevalues[{(pair.first).first+1,(pair.first).second}] = vals;                                                                                                       				firsta.insert((pair.first).first);                for(auto x: pair.second){                                 firsta.insert(x);                         }                                         }
+	firststates = firsta.size();                      for(auto pair :second.statevalues){                       newpair.first = (pair.first).first+firststates+1;                                                     newpair.second = (pair.first).second;                                                               vals.clear();                   			for(auto x: pair.second){                                 vals.push_back(firststates+1+x);                                                              }
+                combinedstatevalues[newpair] = vals;
+                totalstates+=1;
+                seconda.insert((pair.first).first);
+                for(auto x: pair.second){
+                        seconda.insert(x);
+                }
+        }
+        totalstates = firsta.size()+seconda.size()
+;
+	combinedstatevalues[{0,'.'}] = {};
+	for(auto x: first.startingstates){
+		combinedstatevalues[{0,'.'}].push_back( x+1);	
+	}
+	for(auto x: second.startingstates){
+		combinedstatevalues[{0,'.'}].push_back( x+firsta.size()+1);
+	}
+	set<int> start {0};
+
+	set<int> end {};
+	for(auto x: first.finishedstates){
+		end.insert(x+1);
+	}
+	for(auto x: second.finishedstates){
+		end.insert(x+1+firsta.size());
+	}
+	NDA nda(alphabet,start,end,combinedstatevalues);
+	return nda;
 }
+
 
