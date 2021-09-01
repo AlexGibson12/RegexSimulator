@@ -75,23 +75,120 @@ class NDA{
 			}
 			return states;
 		}
-	private:
 		set<int> startingstates;
 		set<int> finishedstates;
 		set<char> alphabet;
 		set<int> mappedstates;
 		map<pair<int,char>,vector<int>> statevalues;
 };
-int main(){
-	set<char> alphabet {'0'};
+NDA star(NDA nda){
+	map<pair<int,char>,vector<int>> newstates;
+	pair<int,char> newpair;
+	set<int> states;
+	int totalstates; 
+	vector<int> news;	
+	for(auto state: nda.statevalues){
+		newpair.first =(state.first).first + 1;
+		newpair.second = (state.first).second;
+		news.clear();
+		for(auto x: state.second){
+			news.push_back(x+1);
+		}
+		newstates[newpair] =news;
+		states.insert((state.first).first);
+		for(auto x:state.second){
+			states.insert(x);
+		}
+	}
+	totalstates = states.size();
+	set<int> startingstates = {0};
+	set<int> finishedstates = {totalstates+1};
+	for(auto finished:nda.finishedstates){
+		newpair.first = finished + 1;
+		newpair.second = '.';
+		newstates[newpair] = {0,totalstates+1};
+		
+	}
+	newpair.first = 0;
+	newpair.second = '.';
+	newstates[newpair] = {1,totalstates+1};
+	NDA ndaf(nda.alphabet,startingstates,finishedstates,newstates);
+	return ndaf;
+	
+}
+NDA concatenate(NDA first,NDA second){
+	set<char> alphabet;
+	for(auto letter : first.alphabet){
+		alphabet.insert(letter);
+	}
+	for(auto letter: second.alphabet){
+		alphabet.insert(letter);
+
+	}
+	map<pair<int,char>,vector<int>> combinedstatevalues;
+	int firststates = 0;
+	int totalstates = 0;
+	pair<int,char> newpair;
+	set<int> firsta;
+	set<int> seconda;
+	for(auto pair : first.statevalues){
+		combinedstatevalues[pair.first] = pair.second;
+		
+		firsta.insert((pair.first).first);
+		for(auto x: pair.second){
+			firsta.insert(x);
+		}
+	}
+	firststates = firsta.size();
+	for(auto pair :second.statevalues){
+		newpair.first = (pair.first).first+firststates;
+		newpair.second = (pair.first).second;
+		vector<int> vals;
+		for(auto x: pair.second){
+			vals.push_back(firststates+x);
+		}
+		combinedstatevalues[newpair] = vals;
+		totalstates+=1;
+		seconda.insert((pair.first).first);
+		for(auto x: pair.second){
+			seconda.insert(x);
+		}
+	}
+	totalstates = firsta.size()+seconda.size();
+	set<int> startstates = {0};
+	for(auto state: first.finishedstates){
+		newpair.first = state;
+		newpair.second = '.';
+		
+		for(auto x: second.startingstates){
+			combinedstatevalues[newpair] = {x + firststates};
+		}
+	}	
+	
+	set<int> finished = {};
+	for(auto x: second.finishedstates){
+		finished.insert(x+firststates);
+	}
+	NDA nda(alphabet,startstates,finished,combinedstatevalues);
+	return nda;
+}
+
+NDA one_character(char t){
+	set<char> alphabet {t};
 	map<pair<int,char>,vector<int>> statevalues;
-	
-	pair<int,char> node00 = {0,'.'};
-	
-	statevalues[{0,'.'}] = {1};	
 	set<int> startstates = {0};
 	set<int> finishedstates = {1};
+	statevalues[{0,t}] = {1};
 	NDA nda(alphabet,startstates,finishedstates,statevalues);
+	return nda;
+}
+int main(){
+	
+	NDA ndaa = one_character('a');
+	NDA ndab = one_character('b');
+	NDA ndac = one_character('c');
+	
+	NDA combined = star(concatenate(ndaa,ndab));	
 	ifstream fin;
 	fin.open("input.txt",ios::in);
 	string input;
@@ -101,7 +198,7 @@ int main(){
 			input += x[i];
 		}
 	}
-	cout << nda.simulate(input) << "\n";
+	cout << combined.simulate(input) << "\n";
 	
-}	
+}
 
