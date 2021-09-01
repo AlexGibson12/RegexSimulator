@@ -1,4 +1,3 @@
-#include </data/data/com.termux/files/home/regular/stdc++.h>
 #include "./nfa.cpp"
 using namespace std;
 class Parser{

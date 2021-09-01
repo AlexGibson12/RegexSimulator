@@ -1,4 +1,4 @@
-#include </data/data/com.termux/files/home/regular/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 class NDA{
