@@ -82,17 +82,13 @@ class NDA{
 		set<int> mappedstates;
 		map<pair<int,char>,vector<int>> statevalues;
 };
-NDA concatenate(NDA first, NDA second){
-	set<char> alphabet {};
-	for(auto
-}
 int main(){
 	set<char> alphabet {'0'};
 	map<pair<int,char>,vector<int>> statevalues;
 	
 	pair<int,char> node00 = {0,'.'};
 	
-	statevalues[node00] = {1};	
+	statevalues[{0,'.'}] = {1};	
 	set<int> startstates = {0};
 	set<int> finishedstates = {1};
 	NDA nda(alphabet,startstates,finishedstates,statevalues);
@@ -105,7 +101,7 @@ int main(){
 			input += x[i];
 		}
 	}
-	cout << nda.simulate(input);
-	cout << "hey" << "\n";
+	cout << nda.simulate(input) << "\n";
+	
 }	
 
